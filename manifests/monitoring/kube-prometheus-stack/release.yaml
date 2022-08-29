@@ -6,12 +6,12 @@ spec:
   interval: 5m
   chart:
     spec:
-      version: "34.x"
+      version: "35.x"
       chart: kube-prometheus-stack
       sourceRef:
         kind: HelmRepository
         name: prometheus-community
-      interval: 60m
+      interval: 10m
   install:
     crds: Skip
     disableWait: true
