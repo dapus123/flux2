@@ -21,6 +21,20 @@ spec:
   # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
   values:
     alertmanager:
+      enabled: true
+    prometheusOperator:
+      # exclude the kyma-system namespace from watching to not conflict with the kyma monitoring stack
+      denyNamespaces:
+        - kyma-system
+    prometheus-node-exporter:
+      # change the port of the node-export to be different from the one used by the kyma monitoring stack
+      service:
+        port: 9101
+        targetPort: 9101
+    kubeletService:
+      # re-use the kublet service definition of the kyma monitoring stack.
+      enabled: false
+    kubeEtcd:
       enabled: false
     prometheus:
       prometheusSpec:
@@ -28,8 +42,28 @@ spec:
         resources:
           requests:
             cpu: 200m
-            memory: 200Mi
+            memory: 400Mi
         podMonitorNamespaceSelector: {}
+        podMetadata:
+          annotations:
+            sidecar.istio.io/inject: "true"
+            traffic.sidecar.istio.io/includeInboundPorts: ""   # do not intercept any inbound ports
+            traffic.sidecar.istio.io/includeOutboundIPRanges: ""  # do not intercept any outbound traffic
+            proxy.istio.io/config: |
+              # configure an env variable `OUTPUT_CERTS` to write certificates to the given folder
+              proxyMetadata:
+                OUTPUT_CERTS: /etc/istio-output-certs
+            sidecar.istio.io/userVolumeMount: '[{"name": "istio-certs", "mountPath": "/etc/istio-output-certs"}]' # mount the shared volume at sidecar proxy
+          # Additional volumes on the output StatefulSet definition.
+          volumes:
+            - emptyDir:
+                medium: Memory
+              name: istio-certs
+
+          # Additional VolumeMounts on the output StatefulSet definition.
+          volumeMounts:
+            - mountPath: /etc/prometheus/secrets/istio.default/
+              name: istio-certs
         podMonitorSelector:
           matchLabels:
             app.kubernetes.io/component: monitoring
