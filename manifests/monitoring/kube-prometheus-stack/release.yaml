@@ -44,6 +44,9 @@ spec:
             cpu: 200m
             memory: 400Mi
         podMonitorNamespaceSelector: {}
+        podMonitorSelector:
+          matchLabels:
+            app.kubernetes.io/component: monitoring
         podMetadata:
           annotations:
             sidecar.istio.io/inject: "true"
@@ -54,16 +57,13 @@ spec:
               proxyMetadata:
                 OUTPUT_CERTS: /etc/istio-output-certs
             sidecar.istio.io/userVolumeMount: '[{"name": "istio-certs", "mountPath": "/etc/istio-output-certs"}]' # mount the shared volume at sidecar proxy
-          # Additional volumes on the output StatefulSet definition.
-          volumes:
-            - emptyDir:
-                medium: Memory
-              name: istio-certs
+        # Additional volumes on the output StatefulSet definition.
+        volumes:
+          - emptyDir:
+              medium: Memory
+            name: istio-certs
 
-          # Additional VolumeMounts on the output StatefulSet definition.
-          volumeMounts:
-            - mountPath: /etc/prometheus/secrets/istio.default/
-              name: istio-certs
-        podMonitorSelector:
-          matchLabels:
-            app.kubernetes.io/component: monitoring
+      # Additional VolumeMounts on the output StatefulSet definition.
+        volumeMounts:
+          - mountPath: /etc/prometheus/secrets/istio.default/
+            name: istio-certs
