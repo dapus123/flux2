@@ -22,10 +22,10 @@ spec:
   values:
     alertmanager:
       enabled: true
-      annotations:
-        sidecar.istio.io/inject: "true"
-        traffic.sidecar.istio.io/includeInboundPorts: ""   # do not intercept any inbound ports
-        traffic.sidecar.istio.io/includeOutboundIPRanges: ""  # do not intercept any outbound traffic
+#      annotations:
+#        sidecar.istio.io/inject: "true"
+#        traffic.sidecar.istio.io/includeInboundPorts: ""   # do not intercept any inbound ports
+#        traffic.sidecar.istio.io/includeOutboundIPRanges: ""  # do not intercept any outbound traffic
     prometheusOperator:
       # exclude the kyma-system namespace from watching to not conflict with the kyma monitoring stack
       denyNamespaces:
