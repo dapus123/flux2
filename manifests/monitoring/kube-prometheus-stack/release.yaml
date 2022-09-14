@@ -47,6 +47,14 @@ spec:
         podMonitorSelector:
           matchLabels:
             app.kubernetes.io/component: monitoring
+        # Disable requires helm release labels on ServiceMonitors
+        serviceMonitorSelectorNilUsesHelmValues: false
+        # Disable requires helm release labels on PodMonitors
+        podMonitorSelectorNilUsesHelmValues: false
+        # Disable requires helm release labels on Probes
+        probeSelectorNilUsesHelmValues: false
+        # Disable requires helm release labels on Rules
+        ruleSelectorNilUsesHelmValues: false
         podMetadata:
           annotations:
             sidecar.istio.io/inject: "true"
@@ -63,7 +71,7 @@ spec:
               medium: Memory
             name: istio-certs
 
-      # Additional VolumeMounts on the output StatefulSet definition.
+        # Additional VolumeMounts on the output StatefulSet definition.
         volumeMounts:
           - mountPath: /etc/prometheus/secrets/istio.default/
             name: istio-certs
