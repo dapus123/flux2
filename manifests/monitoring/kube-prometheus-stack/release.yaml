@@ -47,6 +47,13 @@ spec:
         podMonitorSelector:
           matchLabels:
             app.kubernetes.io/component: monitoring
+        serviceMonitorSelectorNilUsesHelmValues: false
+        # Disable requires helm release labels on PodMonitors
+        podMonitorSelectorNilUsesHelmValues: false
+        # Disable requires helm release labels on Probes
+        probeSelectorNilUsesHelmValues: false
+        # Disable requires helm release labels on Rules
+        ruleSelectorNilUsesHelmValues: false
         podMetadata:
           annotations:
             sidecar.istio.io/inject: "true"
