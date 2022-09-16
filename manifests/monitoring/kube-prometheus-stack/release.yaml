@@ -47,6 +47,7 @@ spec:
         podMonitorSelector:
           matchLabels:
             app.kubernetes.io/component: monitoring
+        # Disable requires helm release labels on ServiceMonitors
         serviceMonitorSelectorNilUsesHelmValues: false
         # Disable requires helm release labels on PodMonitors
         podMonitorSelectorNilUsesHelmValues: false
@@ -74,3 +75,18 @@ spec:
         volumeMounts:
           - mountPath: /etc/prometheus/secrets/istio.default/
             name: istio-certs
+        additionalScrapeConfigs:
+          - job_name: 'federate'
+              scrape_interval: 15s
+
+              honor_labels: true
+              metrics_path: '/federate'
+
+              params:
+                'match[]':
+                  - '{job="prometheus"}'
+                  - '{__name__=~"job:.*"}'
+
+              static_configs:
+                - targets:
+                    - 'monitoring-prometheus.kyma-system.svc.cluster.local:9090'
